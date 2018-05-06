@@ -56,3 +56,4 @@ $container->setDefinitions([
 ### License
 
 [Container](https://github.com/Ejz/Container) is licensed under the [WTFPL License](https://en.wikipedia.org/wiki/WTFPL) (see [LICENSE](LICENSE)).
+
