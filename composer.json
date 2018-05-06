@@ -1,0 +1,25 @@
+{
+    "name": "ejz/container",
+    "description": "PSR-11 compatible Dependency Injection container.",
+    "keywords": ["ejz", "container", "psr-11", "di", "dependency", "injection"],
+    "license": "WTFPL",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Ejz/Container"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Evgeny Cernisev",
+            "email": "ejz@ya.ru",
+            "homepage": "https://ejz.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "autoload": {
+        "psr-4": {"Ejz\\": "src/Ejz"}
+    }
+}
