@@ -4,7 +4,8 @@ namespace Ejz;
 
 use ReflectionClass;
 use ReflectionFunction;
-use Ejz\Exceptions\InvalidArgumentException;
+use InvalidArgumentException;
+use Ejz\Exceptions\ContainerException;
 use Ejz\Exceptions\NotFoundException;
 use Psr\Container\ContainerInterface;
 
