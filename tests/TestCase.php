@@ -22,7 +22,7 @@ abstract class TestCase extends TestCaseParent
      */
     protected function setUp()
     {
-        if (!$this->container) {
+        if (!$this->container && is_file(CONTAINER_FILE)) {
             $this->container = require CONTAINER_FILE;
         }
     }
