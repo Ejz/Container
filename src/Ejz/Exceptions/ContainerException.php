@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Ejz\Exceptions;
 
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
