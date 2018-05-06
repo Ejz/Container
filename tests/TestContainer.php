@@ -2,9 +2,10 @@
 
 namespace Tests;
 
-use App\Container;
-use App\ContainerException;
 use InvalidArgumentException;
+use Ejz\Container;
+use Ejz\Exceptions\ContainerException;
+use Ejz\Exceptions\NotFoundException;
 use Psr\Container\ContainerInterface;
 
 interface I1 { }
