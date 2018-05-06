@@ -122,7 +122,7 @@ final class Container implements ContainerInterface
         }
         $parameters = $function ? $function->getParameters() : [];
         $this->parameters[$key] = $parameters;
-        return $this->parameters[$class];
+        return $this->parameters[$key];
     }
 
     /**
