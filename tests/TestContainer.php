@@ -73,9 +73,8 @@ class TestContainer extends TestCase
         $this->assertInstanceOf(C6::class, $i6);
         $i7 = $container->get(I7::class);
         $this->assertInstanceOf(C7::class, $i7);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ContainerException::class);
         $i8 = $container->get(I8::class);
-        $this->assertInstanceOf(C8::class, $i8);
     }
 
     /**
