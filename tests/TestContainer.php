@@ -26,6 +26,9 @@ interface I8 { }
 class C8 implements I8 { public function __construct(I1 $i1, array $a) { } }
 interface I9 { }
 class C9 implements I9 { public function __construct(I1 $i1, array $a) { } }
+interface I10 { }
+class C10 implements I10 { }
+class C11 { public function __construct(I10 $i10) { } }
 
 class TestContainer extends TestCase
 {
@@ -101,5 +104,25 @@ class TestContainer extends TestCase
         $this->assertInstanceOf(C9::class, $i9);
         $this->expectException(InvalidArgumentException::class);
         $i8 = $container->get(I8::class, ['a' => '']);
+    }
+
+    /**
+     *
+     */
+    public function testContainerBugWithInterface()
+    {
+        $container = new Container();
+        $container->setDefinitions([
+            I1::class => C1::class,
+            I7::class => function () {
+                return $this->make(C7::class);
+            },
+            I8::class => C8::class,
+            I9::class => function (I1 $i1, $a) {
+                return new C9($i1, (array) $a);
+            },
+        ]);
+        $c11 = $container->get(C11::class, ['i10' => new C10()]);
+        $this->assertInstanceOf(C11::class, $c11);
     }
 }

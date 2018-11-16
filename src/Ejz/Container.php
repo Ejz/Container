@@ -155,22 +155,25 @@ final class Container implements ContainerInterface
         $parameters = $this->getParameters($class, $ignore_definition);
         foreach ($parameters as $parameter) {
             $type = $parameter->getType();
+            $type_string = (string) $type;
             $name = $parameter->getName();
             if (array_key_exists($name, $arguments)) {
                 $argument = $arguments[$name];
-                $_ = is_object($argument) ? get_class($argument) : gettype($argument);
-                if ($_ === 'integer') {
-                    $_ = 'int';
-                } elseif ($_ === 'boolean') {
-                    $_ = 'bool';
+                if (is_object($argument)) {
+                    $argument_type = (string) get_class($argument);
+                } else {
+                    $argument_type = gettype($argument);
+                    $_ = ['integer' => 'int', 'boolean' => 'bool'];
+                    $argument_type = $_[$argument_type] ?? $argument_type;
                 }
-                if (((string) $type) && $_ !== (string) $type) {
+                if (is_object($argument) && in_array($type_string, class_implements($argument))) {
+                } elseif ($type_string && $argument_type !== $type_string) {
                     throw new InvalidArgumentException(sprintf(
                         'Error initiating %s. The $%s parameter accepts arguments of type %s, %s given!',
                         $class,
                         $name,
-                        (string) $type,
-                        $_
+                        $type_string,
+                        $argument_type
                     ));
                 }
                 $args[] = $argument;
@@ -186,7 +189,7 @@ final class Container implements ContainerInterface
                     $name
                 ));
             }
-            $args[] = $this->get((string) $type);
+            $args[] = $this->get($type_string);
         }
         $definition = $this->getDefinition($class, $ignore_definition);
         if (is_callable($definition)) {
