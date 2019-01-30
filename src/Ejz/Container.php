@@ -61,7 +61,10 @@ final class Container implements ContainerInterface
         }, $parameters);
         $arguments = array_intersect_key($arguments, array_flip($parameters));
         ksort($arguments);
-        $key = $class . ($arguments ? '_' . crc32(serialize($arguments)) : '');
+        $serializable_arguments = array_map(function ($_) {
+            return is_object($_) ? spl_object_id($_) : $_;
+        }, $arguments);
+        $key = $class . ($arguments ? '_' . crc32(serialize($serializable_arguments)) : '');
         if (isset($this->resolved[$key])) {
             return $this->resolved[$key];
         }
