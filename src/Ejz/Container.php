@@ -61,10 +61,7 @@ final class Container implements ContainerInterface
         }, $parameters);
         $arguments = array_intersect_key($arguments, array_flip($parameters));
         ksort($arguments);
-        $serializable_arguments = array_map(function ($_) {
-            return is_object($_) ? spl_object_id($_) : $_;
-        }, $arguments);
-        $key = $class . ($arguments ? '_' . crc32(serialize($serializable_arguments)) : '');
+        $key = $class . ($arguments ? '_' . md5(serialize($arguments)) : '');
         if (isset($this->resolved[$key])) {
             return $this->resolved[$key];
         }
@@ -92,7 +89,7 @@ final class Container implements ContainerInterface
      */
     private function getDefinition(string $class, bool $ignore_definition = false)
     {
-        if (!$ignore_definition && isset($this->definitions[$class])) {
+        while (!$ignore_definition && is_string($class) && isset($this->definitions[$class])) {
             $class = $this->definitions[$class];
         }
         if (is_string($class) && !class_exists($class)) {
@@ -170,6 +167,7 @@ final class Container implements ContainerInterface
                     $argument_type = $_[$argument_type] ?? $argument_type;
                 }
                 if (is_object($argument) && in_array($type_string, class_implements($argument))) {
+                } elseif ($type && $type->allowsNull() && $argument_type === 'NULL') {
                 } elseif ($type_string && $argument_type !== $type_string) {
                     throw new InvalidArgumentException(sprintf(
                         'Error initiating %s. The $%s parameter accepts arguments of type %s, %s given!',

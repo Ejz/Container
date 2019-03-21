@@ -29,6 +29,7 @@ class C9 implements I9 { public function __construct(I1 $i1, array $a) { } }
 interface I10 { }
 class C10 implements I10 { }
 class C11 { public function __construct(I10 $i10) { } }
+class C12 { public function __construct(?I10 $i10) { } }
 
 class TestContainer extends TestCase
 {
@@ -124,5 +125,15 @@ class TestContainer extends TestCase
         ]);
         $c11 = $container->get(C11::class, ['i10' => new C10()]);
         $this->assertInstanceOf(C11::class, $c11);
+    }
+
+    /**
+     *
+     */
+    public function testContainerAllowsNull()
+    {
+        $container = new Container();
+        $c12 = $container->get(C12::class, ['i10' => null]);
+        $this->assertInstanceOf(C12::class, $c12);
     }
 }
