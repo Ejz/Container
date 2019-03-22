@@ -186,7 +186,9 @@ final class Container implements ContainerInterface
                 continue;
             }
             if ($parameter->isOptional()) {
-                $optional[] = $parameter->getDefaultValue();
+                if ($parameter->isDefaultValueAvailable()) {
+                    $optional[] = $parameter->getDefaultValue();
+                }
                 continue;
             }
             if ($type->isBuiltin()) {

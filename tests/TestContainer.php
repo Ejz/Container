@@ -35,6 +35,10 @@ class C16 {
     public $s;
     public function __construct(int $a, int $b = 2, int $c = 3) { $this->s = $a + $b + $c; }
 }
+class C17 {
+    public $s;
+    public function __construct(...$a) { $this->s = array_sum($a); }
+}
 
 class TestContainer extends TestCase
 {
@@ -172,6 +176,25 @@ class TestContainer extends TestCase
         ]);
         $i10 = $container->get(I10::class);
         $this->assertInstanceOf(C15::class, $i10);
+    }
+
+    /**
+     * @test
+     */
+    public function test_container_is_default_value_available()
+    {
+        $container = new Container();
+        $c17 = $container->make(C17::class);
+        $this->assertInstanceOf(C17::class, $c17);
+        $this->assertTrue($c17->s === 0);
+        $container->setDefinitions([
+            C17::class => function () {
+                return new C17(1, 2, 3);
+            },
+        ]);
+        $c17 = $container->make(C17::class);
+        $this->assertInstanceOf(C17::class, $c17);
+        $this->assertTrue($c17->s === 6);
     }
 
     /**
