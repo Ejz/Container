@@ -153,6 +153,7 @@ final class Container implements ContainerInterface
         }
         $args = [];
         $parameters = $this->getParameters($class, $ignore_definition);
+        $optional = [];
         foreach ($parameters as $parameter) {
             $type = $parameter->getType();
             $type_string = (string) $type;
@@ -177,10 +178,15 @@ final class Container implements ContainerInterface
                         $argument_type
                     ));
                 }
+                if ($optional) {
+                    $args = array_merge($args, $optional);
+                    $optional = [];
+                }
                 $args[] = $argument;
                 continue;
             }
             if ($parameter->isOptional()) {
+                $optional[] = $parameter->getDefaultValue();
                 continue;
             }
             if ($type->isBuiltin()) {
@@ -190,6 +196,10 @@ final class Container implements ContainerInterface
                     $name
                 ));
             }
+            if ($optional) {
+                $args = array_merge($args, $optional);
+                $optional = [];
+            }
             $args[] = $this->get($type_string);
         }
         $definition = $this->getDefinition($class, $ignore_definition);
@@ -198,7 +208,7 @@ final class Container implements ContainerInterface
         } else {
             $object = new $definition(...$args);
         }
-        if (isset($this->definitions[$class]) && !$ignore_definition && !($object instanceof $class)) {
+        if (isset($this->definitions[$class]) && !$ignore_definition && !$object instanceof $class) {
             throw new ContainerException(sprintf(
                 'Error instantiating %s. Got instance of %s!',
                 $class,

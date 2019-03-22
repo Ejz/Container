@@ -30,6 +30,11 @@ interface I10 { }
 class C10 implements I10 { }
 class C11 { public function __construct(I10 $i10) { } }
 class C12 { public function __construct(?I10 $i10) { } }
+class C13 implements I10 {} class C14 extends C13 {} class C15 extends C14 {}
+class C16 {
+    public $s;
+    public function __construct(int $a, int $b = 2, int $c = 3) { $this->s = $a + $b + $c; }
+}
 
 class TestContainer extends TestCase
 {
@@ -42,9 +47,9 @@ class TestContainer extends TestCase
     }
 
     /**
-     *
+     * @test
      */
-    public function testContainerCommon()
+    public function test_container_common()
     {
         $container = new Container();
         $container->setDefinitions([
@@ -82,9 +87,9 @@ class TestContainer extends TestCase
     }
 
     /**
-     *
+     * @test
      */
-    public function testContainerArguments()
+    public function test_container_arguments()
     {
         $container = new Container();
         $container->setDefinitions([
@@ -108,9 +113,21 @@ class TestContainer extends TestCase
     }
 
     /**
-     *
+     * @test
      */
-    public function testContainerBugWithInterface()
+    public function test_container_optional_arguments()
+    {
+        $container = new Container();
+        $c16 = $container->get(C16::class, ['a' => 1]);
+        $this->assertTrue($c16->s === 6);
+        $c16 = $container->get(C16::class, ['a' => 1, 'c' => 4]);
+        $this->assertTrue($c16->s === 7);
+    }
+
+    /**
+     * @test
+     */
+    public function test_container_bug_with_interface()
     {
         $container = new Container();
         $container->setDefinitions([
@@ -128,9 +145,39 @@ class TestContainer extends TestCase
     }
 
     /**
-     *
+     * @test
      */
-    public function testContainerAllowsNull()
+    public function test_container_bug_with_recursive_1()
+    {
+        $container = new Container();
+        $container->setDefinitions([
+            I10::class => C15::class,
+        ]);
+        $i10 = $container->get(I10::class);
+        $this->assertInstanceOf(C15::class, $i10);
+    }
+
+    /**
+     * @test
+     */
+    public function test_container_bug_with_recursive_2()
+    {
+        $container = new Container();
+        $container->setDefinitions([
+            I10::class => C14::class,
+            C14::class => C15::class,
+            C15::class => function () {
+                return new C15();
+            },
+        ]);
+        $i10 = $container->get(I10::class);
+        $this->assertInstanceOf(C15::class, $i10);
+    }
+
+    /**
+     * @test
+     */
+    public function test_container_allows_null()
     {
         $container = new Container();
         $c12 = $container->get(C12::class, ['i10' => null]);
